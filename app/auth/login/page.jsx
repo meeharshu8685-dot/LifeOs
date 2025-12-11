@@ -22,7 +22,12 @@ export default function LoginPage() {
         setError('');
 
         try {
-            await supabase.auth.setPersistence(rememberMe ? browserLocalPersistence : browserSessionPersistence);
+            // FIXME: setPersistence is causing a crash. Disabling for now.
+            // if (supabase.auth.setPersistence) {
+            //     await supabase.auth.setPersistence(rememberMe ? browserLocalPersistence : browserSessionPersistence);
+            // } else {
+            //     console.warn('supabase.auth.setPersistence is not available');
+            // }
 
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
