@@ -1,0 +1,22 @@
+=== Starting Next.js Dev Server with Full Logging ===
+Current directory: /home/harshu8685/Projects/LifeOs
+Node version: v18.20.4
+NPM version: 9.2.0
+
+=== Environment Variables ===
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://ueadvqeprrhwsznlypud.supabase.co
+
+# Note: Get your anon key from Supabase Dashboard:
+# Project Settings > API > Project API keys > anon/public key
+
+=== Starting Server ===
+
+> lifeos@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.21
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
