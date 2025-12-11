@@ -6,6 +6,7 @@ import { useStore } from '@/lib/store';
 import { supabase } from '@/lib/supabaseClient';
 import SplashScreen from '@/components/SplashScreen';
 import Sidebar from '@/components/Sidebar';
+import ParallaxBackground from '@/components/ParallaxBackground';
 import LevelUpModal from '@/components/LevelUpModal';
 
 export default function RootLayout({ children }) {
@@ -52,6 +53,8 @@ export default function RootLayout({ children }) {
             </head>
             <body>
                 {showSplash && <SplashScreen />}
+
+                <ParallaxBackground />
 
                 <Sidebar />
 
