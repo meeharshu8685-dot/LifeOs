@@ -10,6 +10,7 @@ import LifeProgressRing from '@/components/LifeProgressRing';
 import YearProgressRing from '@/components/YearProgressRing';
 import HabitCard from '@/components/HabitCard';
 import SkillCard from '@/components/SkillCard';
+import HealthStatsCards from '@/components/HealthStatsCards';
 import { MoodTrendChart, HabitCompletionChart } from '@/components/AnalyticsCharts';
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Award, Zap, BookOpen, Plus } from 'lucide-react';
@@ -98,7 +99,7 @@ export default function DashboardPage() {
                     transition={{ delay: 0.2 }}
                     className="card flex items-center justify-center"
                 >
-                    <LifeProgressRing birthdate={userProfile.birthdate} />
+                    <LifeProgressRing birthdate={userProfile.birthdate} birthyear={userProfile.birthyear} />
                 </motion.div>
 
                 <motion.div
@@ -109,6 +110,15 @@ export default function DashboardPage() {
                     <YearProgressRing />
                 </motion.div>
             </div>
+
+            {/* Health & Vitality Stats */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.32 }}
+            >
+                <HealthStatsCards userData={userProfile} />
+            </motion.div>
 
             {/* Quick Actions */}
             <motion.div

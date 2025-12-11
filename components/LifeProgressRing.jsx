@@ -3,9 +3,12 @@
 import { motion } from 'framer-motion';
 import { calculateLifeProgress, getAge } from '@/lib/dateUtils';
 
-export default function LifeProgressRing({ birthdate, lifeExpectancy = 80 }) {
-    const progress = calculateLifeProgress(birthdate, lifeExpectancy);
-    const age = getAge(birthdate);
+export default function LifeProgressRing({ birthdate, birthyear, lifeExpectancy = 80 }) {
+    // If birthyear is provided, construct a date
+    const effectiveBirthdate = birthyear ? new Date(birthyear, 0, 1) : birthdate;
+
+    const progress = calculateLifeProgress(effectiveBirthdate, lifeExpectancy);
+    const age = getAge(effectiveBirthdate);
     const radius = 60;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (progress / 100) * circumference;

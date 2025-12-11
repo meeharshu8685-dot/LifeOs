@@ -165,7 +165,7 @@ export default function ProfilePage() {
                     className="space-y-6"
                 >
                     <div className="card flex items-center justify-center">
-                        <LifeProgressRing birthdate={userProfile.birthdate} />
+                        <LifeProgressRing birthdate={userProfile.birthdate} birthyear={userProfile.birthyear} />
                     </div>
 
                     <div className="card">
