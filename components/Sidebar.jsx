@@ -1,7 +1,6 @@
-'use client';
-
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Home,
@@ -32,6 +31,8 @@ export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
 
+    const [isHovered, setIsHovered] = useState(false);
+
     // Don't show on auth pages
     if (pathname?.startsWith('/auth')) {
         return null;
@@ -44,77 +45,97 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Desktop Sidebar */}
-            <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-50 bg-white/70 dark:bg-black/40 backdrop-blur-xl border-r border-gray-200 dark:border-white/10 p-4">
-                <div className="flex items-center space-x-2 px-4 py-6 mb-4">
-                    <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                        L
-                    </div>
-                    <span className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
-                        LifeOS
-                    </span>
+            {/* Desktop Hover Trigger Area & Sidebar Container */}
+            <div
+                className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 pointer-events-none"
+            >
+                {/* Interaction Zone - handles hovers */}
+                <div
+                    className="absolute left-0 top-0 bottom-0 w-64 pointer-events-auto"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    {/* Invisible Trigger Strip (always accessible) */}
+                    <div className="absolute left-0 top-0 bottom-0 w-6 bg-transparent z-50" />
+
+                    {/* Actual Sidebar Panel */}
+                    <motion.aside
+                        initial={{ x: '-100%' }}
+                        animate={{ x: isHovered ? '0%' : '-100%' }}
+                        transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+                        className="w-64 h-full flex flex-col bg-white/80 dark:bg-black/80 backdrop-blur-xl border-r border-gray-200 dark:border-white/10 shadow-2xl"
+                    >
+                        <div className="flex items-center space-x-2 px-6 py-8 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                L
+                            </div>
+                            <span className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
+                                LifeOS
+                            </span>
+                        </div>
+
+                        <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar px-4">
+                            {navItems.map((item) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className={`relative flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
+                                            ? 'text-white'
+                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                            }`}
+                                    >
+                                        {isActive && (
+                                            <motion.div
+                                                layoutId="sidebar-active"
+                                                className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-md"
+                                                initial={false}
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                            />
+                                        )}
+                                        <item.icon
+                                            size={20}
+                                            className={`relative z-10 mr-3 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}
+                                        />
+                                        <span className="relative z-10 font-medium">{item.label}</span>
+                                    </Link>
+                                );
+                            })}
+
+                            {/* Settings & Logout separate block */}
+                            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-white/10">
+                                <Link
+                                    href="/settings"
+                                    className={`relative flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${pathname === '/settings'
+                                        ? 'text-white'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                        }`}
+                                >
+                                    {pathname === '/settings' && (
+                                        <motion.div
+                                            layoutId="sidebar-active"
+                                            className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl"
+                                            initial={false}
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        />
+                                    )}
+                                    <Settings size={20} className="relative z-10 mr-3" />
+                                    <span className="relative z-10 font-medium">Settings</span>
+                                </Link>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full relative flex items-center px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                                >
+                                    <LogOut size={20} className="mr-3" />
+                                    <span className="font-medium">Log Out</span>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.aside>
                 </div>
-
-                <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`relative flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${isActive
-                                    ? 'text-white'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                                    }`}
-                            >
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="sidebar-active"
-                                        className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl"
-                                        initial={false}
-                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    />
-                                )}
-                                <item.icon
-                                    size={20}
-                                    className={`relative z-10 mr-3 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}
-                                />
-                                <span className="relative z-10 font-medium">{item.label}</span>
-                            </Link>
-                        );
-                    })}
-
-                    {/* Settings & Logout separate block */}
-                    <div className="pt-4 mt-4 border-t border-gray-200 dark:border-white/10">
-                        <Link
-                            href="/settings"
-                            className={`relative flex items-center px-4 py-3 rounded-xl transition-all duration-200 group ${pathname === '/settings'
-                                ? 'text-white'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                                }`}
-                        >
-                            {pathname === '/settings' && (
-                                <motion.div
-                                    layoutId="sidebar-active"
-                                    className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl"
-                                    initial={false}
-                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                />
-                            )}
-                            <Settings size={20} className="relative z-10 mr-3" />
-                            <span className="relative z-10 font-medium">Settings</span>
-                        </Link>
-
-                        <button
-                            onClick={handleLogout}
-                            className="w-full relative flex items-center px-4 py-3 rounded-xl text-gray-600 dark:text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
-                        >
-                            <LogOut size={20} className="mr-3" />
-                            <span className="font-medium">Log Out</span>
-                        </button>
-                    </div>
-                </div>
-            </aside>
+            </div>
 
             {/* Mobile Bottom Navigation */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 safe-area-bottom">

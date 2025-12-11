@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
 
                 <Sidebar />
 
-                <div className="md:pl-64 transition-all duration-300">
+                <div className="transition-all duration-300">
                     <div className="min-h-screen pb-20 md:pb-8">
                         {children}
                     </div>
