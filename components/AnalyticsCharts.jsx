@@ -2,7 +2,8 @@
 
 import {
     ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    LineChart, Line
 } from 'recharts';
 
 export function HabitCompletionChart({ data }) {
@@ -73,5 +74,48 @@ export function SkillRadarChart({ data }) {
                 </RadarChart>
             </ResponsiveContainer>
         </div>
+    );
+}
+
+export function MoodTrendChart({ data }) {
+    if (!data || data.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-64 text-gray-400">
+                No mood data yet
+            </div>
+        );
+    }
+
+    return (
+        <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                    dataKey="date"
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                />
+                <YAxis
+                    domain={[0, 10]}
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                />
+                <Tooltip
+                    contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px'
+                    }}
+                />
+                <Line
+                    type="monotone"
+                    dataKey="mood"
+                    stroke="#8b5cf6"
+                    strokeWidth={3}
+                    dot={{ fill: '#8b5cf6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                />
+            </LineChart>
+        </ResponsiveContainer>
     );
 }
