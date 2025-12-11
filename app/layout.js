@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { supabase } from '@/lib/supabaseClient';
 import SplashScreen from '@/components/SplashScreen';
-import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
 import LevelUpModal from '@/components/LevelUpModal';
 
 export default function RootLayout({ children }) {
@@ -53,11 +53,13 @@ export default function RootLayout({ children }) {
             <body>
                 {showSplash && <SplashScreen />}
 
-                <div className="min-h-screen pb-20 md:pb-0">
-                    {children}
-                </div>
+                <Sidebar />
 
-                <Navbar />
+                <div className="md:pl-64 transition-all duration-300">
+                    <div className="min-h-screen pb-20 md:pb-8">
+                        {children}
+                    </div>
+                </div>
 
                 <LevelUpModal
                     isOpen={showLevelUpModal}
