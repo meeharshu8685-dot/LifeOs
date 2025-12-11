@@ -22,29 +22,22 @@ export default function SignupPage() {
         setError('');
 
         try {
-            // Create auth user
+            // Create auth user with metadata
+            // The database trigger will automatically create the user profile
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
+                options: {
+                    data: {
+                        name: name,
+                        birthdate: birthdate,
+                    }
+                }
             });
 
             if (authError) throw authError;
 
             if (authData.user) {
-                // Create user profile
-                const { error: profileError } = await supabase
-                    .from('users')
-                    .insert({
-                        id: authData.user.id,
-                        name,
-                        email,
-                        birthdate,
-                        level: 1,
-                        xp: 0,
-                    });
-
-                if (profileError) throw profileError;
-
                 router.push('/');
             }
         } catch (error) {
