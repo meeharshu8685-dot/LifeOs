@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { browserLocalPersistence, browserSessionPersistence } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock } from 'lucide-react';
@@ -11,6 +12,7 @@ export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -20,6 +22,8 @@ export default function LoginPage() {
         setError('');
 
         try {
+            await supabase.auth.setPersistence(rememberMe ? browserLocalPersistence : browserSessionPersistence);
+
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -91,6 +95,27 @@ export default function LoginPage() {
                                     placeholder="••••••••"
                                 />
                             </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <input
+                                    id="remember-me"
+                                    type="checkbox"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                                    Remember me
+                                </label>
+                            </div>
+                            <Link
+                                href="/auth/forgot-password"
+                                className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-500"
+                            >
+                                Forgot Password?
+                            </Link>
                         </div>
 
                         <button

@@ -3,14 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { getStats } from '@/actions/dashboard/getStats';
+import { getStats, getMoodAnalytics } from '@/actions/dashboard/getStats';
+import { getCombinedStats } from '@/actions/analytics/getCombinedStats';
 import XPBar from '@/components/XPBar';
 import LifeProgressRing from '@/components/LifeProgressRing';
 import YearProgressRing from '@/components/YearProgressRing';
 import HabitCard from '@/components/HabitCard';
 import SkillCard from '@/components/SkillCard';
+import { MoodTrendChart, HabitCompletionChart } from '@/components/AnalyticsCharts';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, Award } from 'lucide-react';
+import { Sparkles, TrendingUp, Award, Zap, BookOpen, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -30,9 +33,21 @@ export default function DashboardPage() {
     const fetchStats = async () => {
         if (!user) return;
 
-        const result = await getStats(user.id);
-        if (result.success) {
-            setStats(result.stats);
+        const [statsResult, moodResult, combinedResult] = await Promise.all([
+            getStats(user.id),
+            getMoodAnalytics(user.id, 7), // Last 7 days for mini chart
+            getCombinedStats(user.id, 7)
+        ]);
+
+        if (statsResult.success) {
+            setStats({
+                ...statsResult.stats,
+                moodData: moodResult.success ? moodResult.data.reverse().map(item => ({
+                    date: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                    mood: item.mood,
+                })) : [],
+                habitData: combinedResult.success ? combinedResult.habitData : []
+            });
         }
         setLoading(false);
     };
@@ -95,45 +110,101 @@ export default function DashboardPage() {
                 </motion.div>
             </div>
 
-            {/* Quick Stats */}
+            {/* Quick Actions */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+                transition={{ delay: 0.35 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
             >
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">🔥</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stats?.analytics?.activeStreaks || 0}
+                <Link href="/journal" className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between hover:scale-[1.02] transition-transform">
+                    <div>
+                        <div className="font-bold text-lg">Log Journal</div>
+                        <div className="text-pink-100 text-sm">How was your day?</div>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Active Streaks</div>
-                </div>
-
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">🎯</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stats?.skills?.length || 0}
+                    <BookOpen size={24} className="text-white/80" />
+                </Link>
+                <Link href="/skills" className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between hover:scale-[1.02] transition-transform">
+                    <div>
+                        <div className="font-bold text-lg">Practice Skill</div>
+                        <div className="text-cyan-100 text-sm">Level up +8 XP</div>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Skills</div>
-                </div>
-
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">📖</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stats?.analytics?.journalStreak || 0}
+                    <Zap size={24} className="text-white/80" />
+                </Link>
+                <Link href="/habits" className="bg-gradient-to-r from-violet-500 to-purple-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between hover:scale-[1.02] transition-transform">
+                    <div>
+                        <div className="font-bold text-lg">New Habit</div>
+                        <div className="text-violet-100 text-sm">Start a streak</div>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Journal Streak</div>
-                </div>
-
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">🏆</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stats?.achievements?.length || 0}
-                    </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Achievements</div>
-                </div>
+                    <Plus size={24} className="text-white/80" />
+                </Link>
             </motion.div>
+
+            {/* Quick Stats & Mini Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {/* Stats Cards */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="grid grid-cols-2 gap-4"
+                >
+                    <div className="card text-center flex flex-col justify-center">
+                        <div className="text-3xl mb-2">🔥</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {stats?.analytics?.activeStreaks || 0}
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">Active Streaks</div>
+                    </div>
+                    <div className="card text-center flex flex-col justify-center">
+                        <div className="text-3xl mb-2">🎯</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {stats?.skills?.length || 0}
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">Skills</div>
+                    </div>
+                    <div className="card text-center flex flex-col justify-center">
+                        <div className="text-3xl mb-2">🏆</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {stats?.achievements?.length || 0}
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">Achievements</div>
+                    </div>
+                    <div className="card text-center flex flex-col justify-center">
+                        <div className="text-3xl mb-2">✨</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {userProfile.level}
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">Level</div>
+                    </div>
+                </motion.div>
+
+                {/* Mini Mood Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45 }}
+                    className="card"
+                >
+                    <h3 className="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider">Mood (Last 7 Days)</h3>
+                    <div className="-ml-4">
+                        <MoodTrendChart data={stats?.moodData || []} />
+                    </div>
+                </motion.div>
+
+                {/* Mini Habit Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="card"
+                >
+                    <h3 className="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider">Habits (Last 7 Days)</h3>
+                    <div className="-ml-4">
+                        <HabitCompletionChart data={stats?.habitData || []} />
+                    </div>
+                </motion.div>
+            </div>
 
             {/* Today's Habits */}
             {stats?.habits && stats.habits.length > 0 && (

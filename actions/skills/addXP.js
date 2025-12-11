@@ -58,6 +58,15 @@ export async function addSkillXP(skillId, userId, xpAmount = XP_REWARDS.SKILL_PR
             .select('type')
             .eq('user_id', userId);
 
+        // Log the activity
+        await supabase
+            .from('skill_logs')
+            .insert({
+                user_id: userId,
+                skill_id: skillId,
+                xp_gained: xpAmount
+            });
+
         const { data: allSkills } = await supabase
             .from('skills')
             .select('level')

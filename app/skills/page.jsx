@@ -5,14 +5,18 @@ import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { supabase } from '@/lib/supabaseClient';
 import { addSkillXP, createSkill } from '@/actions/skills/addXP';
+import { getSkillHistory } from '@/actions/skills/getSkillHistory';
 import SkillCard from '@/components/SkillCard';
+import SkillHistoryChart from '@/components/SkillHistoryChart';
 import { motion } from 'framer-motion';
-import { Plus, Target } from 'lucide-react';
+import { Plus, Target, Zap, Clock } from 'lucide-react';
+import { formatDate } from '@/lib/dateUtils';
 
 export default function SkillsPage() {
     const router = useRouter();
     const { user, userProfile, showLevelUp, updateXP } = useStore();
     const [skills, setSkills] = useState([]);
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newSkillName, setNewSkillName] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -28,13 +32,19 @@ export default function SkillsPage() {
     const fetchSkills = async () => {
         if (!user) return;
 
-        const { data } = await supabase
-            .from('skills')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('level', { ascending: false });
+        const [skillsData, historyResult] = await Promise.all([
+            supabase
+                .from('skills')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('level', { ascending: false }),
+            getSkillHistory(user.id)
+        ]);
 
-        setSkills(data || []);
+        setSkills(skillsData.data || []);
+        if (historyResult.success) {
+            setHistory(historyResult.data);
+        }
         setLoading(false);
     };
 
@@ -131,28 +141,80 @@ export default function SkillsPage() {
                 </motion.form>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {skills.length === 0 ? (
-                    <div className="col-span-full text-center py-12 card">
-                        <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
-                            No skills tracked yet. Start your learning journey!
-                        </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {skills.length === 0 ? (
+                            <div className="col-span-full text-center py-12 card">
+                                <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                                    No skills tracked yet. Start your learning journey!
+                                </p>
+                            </div>
+                        ) : (
+                            skills.map((skill) => (
+                                <div key={skill.id} className="relative">
+                                    <SkillCard skill={skill} />
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => handleAddXP(skill.id)}
+                                        className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center justify-center"
+                                    >
+                                        <Zap size={16} className="mr-1 fill-current" />
+                                        Practice (+8 XP)
+                                    </motion.button>
+                                </div>
+                            ))
+                        )}
                     </div>
-                ) : (
-                    skills.map((skill) => (
-                        <div key={skill.id} className="relative">
-                            <SkillCard skill={skill} />
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => handleAddXP(skill.id)}
-                                className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm"
-                            >
-                                +8 XP (Practice)
-                            </motion.button>
+                </div>
+
+                <div className="space-y-6">
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="card"
+                    >
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                            <Target size={20} className="mr-2 text-cyan-600" />
+                            Weekly Progress
+                        </h2>
+                        <SkillHistoryChart data={history} />
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="card"
+                    >
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                            <Clock size={20} className="mr-2 text-gray-500" />
+                            Recent Activity
+                        </h2>
+                        <div className="space-y-4">
+                            {history.length === 0 ? (
+                                <p className="text-sm text-gray-500 text-center py-4">No recent practice.</p>
+                            ) : (
+                                history.slice(0, 5).map((log) => (
+                                    <div key={log.id} className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0 last:pb-0">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                                {log.skills?.name || 'Unknown Skill'}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                {formatDate(log.created_at, 'MMM dd, HH:mm')}
+                                            </p>
+                                        </div>
+                                        <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-full">
+                                            +{log.xp_gained} XP
+                                        </span>
+                                    </div>
+                                ))
+                            )}
                         </div>
-                    ))
-                )}
+                    </motion.div>
+                </div>
             </div>
         </div>
     );

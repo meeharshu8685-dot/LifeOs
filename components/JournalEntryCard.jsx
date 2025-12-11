@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { formatDate } from '@/lib/dateUtils';
-import { Smile, Meh, Frown } from 'lucide-react';
+import { Smile, Meh, Frown, Sparkles } from 'lucide-react';
 
 function getMoodIcon(mood) {
     if (mood >= 7) return <Smile className="text-green-500" size={24} />;
@@ -52,12 +52,24 @@ export default function JournalEntryCard({ entry }) {
             )}
 
             {entry.lessons && (
-                <div>
+                <div className="mb-3">
                     <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">
                         💡 Lessons
                     </p>
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
                         {entry.lessons}
+                    </p>
+                </div>
+            )}
+
+            {entry.improvements && (
+                <div>
+                    <p className="text-xs font-semibold text-yellow-600 dark:text-yellow-400 mb-1 flex items-center">
+                        <Sparkles size={12} className="mr-1" />
+                        To Improve
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                        {entry.improvements}
                     </p>
                 </div>
             )}

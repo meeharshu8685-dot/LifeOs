@@ -5,7 +5,7 @@ import { XP_REWARDS, didLevelUp, calculateLevel } from '@/lib/xpEngine';
 import { calculateJournalStreak } from '@/lib/streakUtils';
 import { getTodayString } from '@/lib/dateUtils';
 
-export async function addJournalEntry(userId, mood, wins, lessons) {
+export async function addJournalEntry(userId, mood, wins, lessons, improvements) {
     try {
         const today = getTodayString();
 
@@ -27,6 +27,7 @@ export async function addJournalEntry(userId, mood, wins, lessons) {
                     mood,
                     wins,
                     lessons,
+                    improvements,
                 })
                 .eq('id', existing.id)
                 .select()
@@ -51,6 +52,7 @@ export async function addJournalEntry(userId, mood, wins, lessons) {
                 mood,
                 wins,
                 lessons,
+                improvements,
                 date: today,
             })
             .select()

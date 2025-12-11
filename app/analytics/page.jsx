@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { getMoodAnalytics } from '@/actions/dashboard/getStats';
+import { getCombinedStats } from '@/actions/analytics/getCombinedStats';
+import { HabitCompletionChart, SkillRadarChart, MoodTrendChart } from '@/components/AnalyticsCharts';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp } from 'lucide-react';
+import { BarChart3, TrendingUp, CheckCircle, Target } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 export default function AnalyticsPage() {
     const router = useRouter();
     const { user } = useStore();
     const [moodData, setMoodData] = useState([]);
+    const [habitData, setHabitData] = useState([]);
+    const [skillData, setSkillData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -25,14 +29,24 @@ export default function AnalyticsPage() {
     const fetchAnalytics = async () => {
         if (!user) return;
 
-        const result = await getMoodAnalytics(user.id, 30);
-        if (result.success) {
-            const formattedData = result.data.reverse().map(item => ({
+        const [moodResult, combinedResult] = await Promise.all([
+            getMoodAnalytics(user.id, 30),
+            getCombinedStats(user.id, 30)
+        ]);
+
+        if (moodResult.success) {
+            const formattedData = moodResult.data.reverse().map(item => ({
                 date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
                 mood: item.mood,
             }));
             setMoodData(formattedData);
         }
+
+        if (combinedResult.success) {
+            setHabitData(combinedResult.habitData);
+            setSkillData(combinedResult.skillData);
+        }
+
         setLoading(false);
     };
 
@@ -100,54 +114,61 @@ export default function AnalyticsPage() {
                 </div>
             </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="card mb-8"
-            >
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                    Mood Trend (Last 30 Days)
-                </h2>
 
-                {moodData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={moodData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                            <XAxis
-                                dataKey="date"
-                                stroke="#9ca3af"
-                                style={{ fontSize: '12px' }}
-                            />
-                            <YAxis
-                                domain={[0, 10]}
-                                stroke="#9ca3af"
-                                style={{ fontSize: '12px' }}
-                            />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px'
-                                }}
-                            />
-                            <Line
-                                type="monotone"
-                                dataKey="mood"
-                                stroke="#8b5cf6"
-                                strokeWidth={3}
-                                dot={{ fill: '#8b5cf6', r: 4 }}
-                                activeDot={{ r: 6 }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="text-center py-12 text-gray-600 dark:text-gray-400">
-                        No mood data yet. Start journaling to see analytics!
-                    </div>
-                )}
-            </motion.div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                {/* Mood Trend Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="card"
+                >
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <TrendingUp size={20} className="mr-2 text-pink-600" />
+                        Mood Trend
+                    </h2>
+
+                    {moodData.length > 0 ? (
+                        <MoodTrendChart data={moodData} />
+                    ) : (
+                        <div className="text-center py-12 text-gray-600 dark:text-gray-400">
+                            No mood data yet.
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Habit Consistency Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="card"
+                >
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <CheckCircle size={20} className="mr-2 text-purple-600" />
+                        Habit Consistency
+                    </h2>
+                    <HabitCompletionChart data={habitData} />
+                </motion.div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Skill Radar Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="card"
+                >
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <Target size={20} className="mr-2 text-cyan-600" />
+                        Skill Balance
+                    </h2>
+                    <SkillRadarChart data={skillData} />
+                </motion.div>
+
+            </div>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
