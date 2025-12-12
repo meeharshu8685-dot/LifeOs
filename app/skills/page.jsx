@@ -88,11 +88,11 @@ export default function SkillsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
             >
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                    <Target className="inline mr-2 text-cyan-600" />
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">
+                    <Target className="inline mr-2 text-indigo-600" />
                     Skills
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-slate-600 dark:text-slate-400">
                     Master skills, gain XP, become unstoppable!
                 </p>
             </motion.div>
@@ -103,7 +103,7 @@ export default function SkillsPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowForm(!showForm)}
-                className="mb-6 w-full md:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 shadow-lg"
+                className="mb-6 w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-indigo-200 dark:shadow-none transition-all"
             >
                 <Plus size={20} />
                 <span>Add New Skill</span>
@@ -114,29 +114,31 @@ export default function SkillsPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     onSubmit={handleCreateSkill}
-                    className="mb-6 card"
+                    className="mb-6 card overflow-hidden"
                 >
-                    <input
-                        type="text"
-                        value={newSkillName}
-                        onChange={(e) => setNewSkillName(e.target.value)}
-                        placeholder="e.g., Python, Guitar, Public Speaking"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent dark:bg-gray-700 dark:text-white mb-3"
-                    />
-                    <div className="flex space-x-2">
-                        <button
-                            type="submit"
-                            className="flex-1 bg-cyan-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-cyan-700"
-                        >
-                            Create
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setShowForm(false)}
-                            className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-2 px-4 rounded-lg"
-                        >
-                            Cancel
-                        </button>
+                    <div className="p-1">
+                        <input
+                            type="text"
+                            value={newSkillName}
+                            onChange={(e) => setNewSkillName(e.target.value)}
+                            placeholder="e.g., Python, Guitar, Public Speaking"
+                            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-800 dark:text-white mb-4 shadow-sm"
+                        />
+                        <div className="flex space-x-3">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors shadow-md"
+                            >
+                                Create
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowForm(false)}
+                                className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3 px-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </motion.form>
             )}
@@ -145,8 +147,8 @@ export default function SkillsPage() {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {skills.length === 0 ? (
-                            <div className="col-span-full text-center py-12 card">
-                                <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                            <div className="col-span-full text-center py-12 card border-dashed border-2 border-slate-200 dark:border-slate-700 shadow-none bg-transparent">
+                                <p className="text-slate-500 dark:text-slate-400 text-lg mb-4">
                                     No skills tracked yet. Start your learning journey!
                                 </p>
                             </div>
@@ -158,7 +160,7 @@ export default function SkillsPage() {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => handleAddXP(skill.id)}
-                                        className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm flex items-center justify-center"
+                                        className="mt-2 w-full bg-slate-50 hover:bg-white border-2 border-indigo-100 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold py-2.5 px-4 rounded-xl text-sm flex items-center justify-center hover:shadow-md transition-all dark:bg-slate-800"
                                     >
                                         <Zap size={16} className="mr-1 fill-current" />
                                         Practice (+8 XP)
@@ -175,8 +177,8 @@ export default function SkillsPage() {
                         animate={{ opacity: 1, x: 0 }}
                         className="card"
                     >
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Target size={20} className="mr-2 text-cyan-600" />
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center">
+                            <Target size={20} className="mr-2 text-indigo-600" />
                             Weekly Progress
                         </h2>
                         <SkillHistoryChart data={history} />
@@ -188,25 +190,25 @@ export default function SkillsPage() {
                         transition={{ delay: 0.1 }}
                         className="card"
                     >
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Clock size={20} className="mr-2 text-gray-500" />
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center">
+                            <Clock size={20} className="mr-2 text-slate-400" />
                             Recent Activity
                         </h2>
                         <div className="space-y-4">
                             {history.length === 0 ? (
-                                <p className="text-sm text-gray-500 text-center py-4">No recent practice.</p>
+                                <p className="text-sm text-slate-500 text-center py-4">No recent practice.</p>
                             ) : (
                                 history.slice(0, 5).map((log) => (
-                                    <div key={log.id} className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0 last:pb-0">
+                                    <div key={log.id} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 last:border-0 last:pb-0">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">
                                                 {log.skills?.name || 'Unknown Skill'}
                                             </p>
-                                            <p className="text-xs text-gray-500">
+                                            <p className="text-xs text-slate-500">
                                                 {formatDate(log.created_at, 'MMM dd, HH:mm')}
                                             </p>
                                         </div>
-                                        <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-full">
+                                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-full">
                                             +{log.xp_gained} XP
                                         </span>
                                     </div>

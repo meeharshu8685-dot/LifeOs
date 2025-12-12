@@ -55,11 +55,11 @@ export default function AchievementsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
             >
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                    <Trophy className="inline mr-2 text-yellow-600" />
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">
+                    <Trophy className="inline mr-2 text-yellow-500" />
                     Achievements
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-slate-600 dark:text-slate-400">
                     {unlockedCount} of {totalCount} unlocked
                 </p>
             </motion.div>
@@ -70,19 +70,19 @@ export default function AchievementsPage() {
                 className="card mb-8"
             >
                 <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
                         Progress
                     </span>
-                    <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                    <span className="text-sm font-black text-violet-600 dark:text-violet-400">
                         {Math.round((unlockedCount / totalCount) * 100)}%
                     </span>
                 </div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-4 bg-slate-100 dark:bg-slate-700/50 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${(unlockedCount / totalCount) * 100}%` }}
                         transition={{ duration: 1, ease: 'easeOut' }}
-                        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500"
+                        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 shadow-[0_0_15px_rgba(251,191,36,0.5)]"
                     />
                 </div>
             </motion.div>

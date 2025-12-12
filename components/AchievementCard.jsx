@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ACHIEVEMENTS } from '@/lib/xpEngine';
-import { Lock } from 'lucide-react';
+import { Lock, Flame, Trophy, Star, Crown, Target, BookOpen, Clapperboard, LibraryBig } from 'lucide-react';
 
 export default function AchievementCard({ achievementId, isUnlocked, unlockedAt }) {
     const achievement = ACHIEVEMENTS[Object.keys(ACHIEVEMENTS).find(
@@ -11,19 +11,33 @@ export default function AchievementCard({ achievementId, isUnlocked, unlockedAt 
 
     if (!achievement) return null;
 
+    const getIcon = (iconName) => {
+        switch (iconName) {
+            case 'Flame': return <Flame size={32} className={isUnlocked ? "text-orange-500" : "text-slate-400"} />;
+            case 'Trophy': return <Trophy size={32} className={isUnlocked ? "text-yellow-500" : "text-slate-400"} />;
+            case 'Star': return <Star size={32} className={isUnlocked ? "text-yellow-400" : "text-slate-400"} />;
+            case 'Crown': return <Crown size={32} className={isUnlocked ? "text-violet-600" : "text-slate-400"} />;
+            case 'Target': return <Target size={32} className={isUnlocked ? "text-red-500" : "text-slate-400"} />;
+            case 'BookOpen': return <BookOpen size={32} className={isUnlocked ? "text-blue-500" : "text-slate-400"} />;
+            case 'Clapperboard': return <Clapperboard size={32} className={isUnlocked ? "text-pink-500" : "text-slate-400"} />;
+            case 'LibraryBig': return <LibraryBig size={32} className={isUnlocked ? "text-indigo-500" : "text-slate-400"} />;
+            default: return <Trophy size={32} className="text-slate-400" />;
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={isUnlocked ? { scale: 1.05, rotate: [0, -2, 2, 0] } : {}}
-            className={`relative rounded-xl p-5 shadow-md border-2 transition-all ${isUnlocked
-                    ? 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-400 dark:border-yellow-600'
-                    : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 opacity-60'
+            whileHover={isUnlocked ? { scale: 1.05, rotate: [0, -1, 1, 0] } : {}}
+            className={`relative rounded-2xl p-6 shadow-sm border transition-all ${isUnlocked
+                ? 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200 dark:border-amber-900/30'
+                : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-70 grayscale'
                 }`}
         >
             {!isUnlocked && (
                 <div className="absolute top-3 right-3">
-                    <Lock size={16} className="text-gray-400" />
+                    <Lock size={16} className="text-slate-400" />
                 </div>
             )}
 
@@ -31,34 +45,34 @@ export default function AchievementCard({ achievementId, isUnlocked, unlockedAt 
                 <motion.div
                     animate={isUnlocked ? { rotate: [0, -10, 10, -10, 0] } : {}}
                     transition={{ duration: 0.5 }}
-                    className="text-5xl mb-3"
+                    className="flex justify-center mb-4"
                 >
-                    {achievement.icon}
+                    {getIcon(achievement.icon)}
                 </motion.div>
 
                 <h4 className={`font-bold mb-1 ${isUnlocked
-                        ? 'text-gray-900 dark:text-white'
-                        : 'text-gray-600 dark:text-gray-400'
+                    ? 'text-slate-900 dark:text-white'
+                    : 'text-slate-600 dark:text-slate-400'
                     }`}>
                     {achievement.name}
                 </h4>
 
-                <p className={`text-sm mb-3 ${isUnlocked
-                        ? 'text-gray-700 dark:text-gray-300'
-                        : 'text-gray-500 dark:text-gray-500'
+                <p className={`text-sm mb-4 ${isUnlocked
+                    ? 'text-slate-600 dark:text-slate-300'
+                    : 'text-slate-400 dark:text-slate-500'
                     }`}>
                     {achievement.description}
                 </p>
 
                 {isUnlocked && unlockedAt && (
-                    <div className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                    <div className="text-xs text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider mb-2">
                         Unlocked {new Date(unlockedAt).toLocaleDateString()}
                     </div>
                 )}
 
-                <div className={`mt-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${isUnlocked
-                        ? 'bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                <div className={`mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${isUnlocked
+                    ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-200'
+                    : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                     }`}>
                     +{achievement.xpReward} XP
                 </div>

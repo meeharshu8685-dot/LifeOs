@@ -36,58 +36,62 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 relative overflow-hidden">
+            {/* Background Blobs */}
+            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-violet-200/40 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-normal dark:bg-violet-900/20 pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-200/40 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-normal dark:bg-indigo-900/20 pointer-events-none" />
+
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md"
+                className="w-full max-w-md relative z-10"
             >
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8">
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-white/50 dark:border-slate-800 p-8">
                     <div className="text-center mb-8">
-                        <h1 className="text-4xl font-black gradient-text mb-2">
+                        <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 mb-2 tracking-tight">
                             LifeOS
                         </h1>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p className="text-slate-600 dark:text-slate-400">
                             Welcome back! Log in to continue your journey
                         </p>
                     </div>
 
                     {error && (
-                        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm">
+                        <div className="mb-4 p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-lg text-sm border border-rose-100 dark:border-rose-800">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
                                 Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent dark:text-white transition-all shadow-sm"
                                     placeholder="your@email.com"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent dark:text-white transition-all shadow-sm"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -96,7 +100,7 @@ export default function LoginPage() {
                         <div className="flex items-center justify-end">
                             <Link
                                 href="/auth/forgot-password"
-                                className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-500"
+                                className="text-sm font-bold text-violet-600 dark:text-violet-400 hover:text-violet-500 hover:underline"
                             >
                                 Forgot Password?
                             </Link>
@@ -105,7 +109,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl hover:shadow-lg hover:shadow-violet-200 dark:shadow-none transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                         >
                             <LogIn size={20} />
                             <span>{loading ? 'Logging in...' : 'Log In'}</span>
@@ -115,10 +119,10 @@ export default function LoginPage() {
                     {/* Divider */}
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                            <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                            <span className="px-2 bg-white/0 dark:bg-slate-900/0 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">
                                 Or continue with
                             </span>
                         </div>
@@ -135,7 +139,7 @@ export default function LoginPage() {
                             });
                             if (error) setError(error.message);
                         }}
-                        className="w-full bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all flex items-center justify-center space-x-3"
+                        className="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center space-x-3"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -147,11 +151,11 @@ export default function LoginPage() {
                     </button>
 
                     <div className="mt-6 text-center">
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">
                             Don't have an account?{' '}
                             <Link
                                 href="/auth/signup"
-                                className="text-purple-600 dark:text-purple-400 font-semibold hover:underline"
+                                className="text-violet-600 dark:text-violet-400 font-bold hover:underline"
                             >
                                 Sign up
                             </Link>

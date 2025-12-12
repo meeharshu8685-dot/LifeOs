@@ -105,11 +105,11 @@ export default function HabitsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
             >
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                    <CheckCircle className="inline mr-2 text-purple-600" />
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">
+                    <CheckCircle className="inline mr-2 text-violet-600" />
                     Habits
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-slate-600 dark:text-slate-400">
                     Build streaks, earn XP, level up!
                 </p>
             </motion.div>
@@ -120,7 +120,7 @@ export default function HabitsPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowForm(!showForm)}
-                className="mb-6 w-full md:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 shadow-lg"
+                className="mb-6 w-full md:w-auto bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-violet-200 dark:shadow-none transition-all"
             >
                 <Plus size={20} />
                 <span>Add New Habit</span>
@@ -131,37 +131,39 @@ export default function HabitsPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     onSubmit={handleCreateHabit}
-                    className="mb-6 card"
+                    className="mb-6 card overflow-hidden"
                 >
-                    <input
-                        type="text"
-                        value={newHabitName}
-                        onChange={(e) => setNewHabitName(e.target.value)}
-                        placeholder="e.g., Morning Exercise, Read for 30 min"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white mb-3"
-                    />
-                    <div className="flex space-x-2">
-                        <button
-                            type="submit"
-                            className="flex-1 bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700"
-                        >
-                            Create
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setShowForm(false)}
-                            className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-2 px-4 rounded-lg"
-                        >
-                            Cancel
-                        </button>
+                    <div className="p-1">
+                        <input
+                            type="text"
+                            value={newHabitName}
+                            onChange={(e) => setNewHabitName(e.target.value)}
+                            placeholder="e.g., Morning Exercise, Read for 30 min"
+                            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent dark:bg-slate-800 dark:text-white mb-4 shadow-sm"
+                        />
+                        <div className="flex space-x-3">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-violet-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-violet-700 transition-colors shadow-md"
+                            >
+                                Create
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowForm(false)}
+                                className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3 px-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </motion.form>
             )}
 
             <div className="space-y-4">
                 {habits.length === 0 ? (
-                    <div className="text-center py-12 card">
-                        <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                    <div className="text-center py-12 card border-dashed border-2 border-slate-200 dark:border-slate-700 shadow-none bg-transparent">
+                        <p className="text-slate-500 dark:text-slate-400 text-lg mb-4">
                             No habits yet. Start building good habits today!
                         </p>
                     </div>

@@ -75,11 +75,11 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-8"
             >
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                    <User className="inline mr-2 text-purple-600" />
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 flex items-center">
+                    <User className="mr-3 text-violet-600" size={32} />
                     Profile
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-slate-600 dark:text-slate-400">
                     Your stats and information
                 </p>
             </motion.div>
@@ -92,13 +92,13 @@ export default function ProfilePage() {
                 >
                     <button
                         onClick={() => setIsEditing(!isEditing)}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-purple-600 transition-colors"
+                        className="absolute top-4 right-4 text-slate-400 hover:text-violet-600 transition-colors p-2 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-xl"
                     >
                         {isEditing ? <X size={20} /> : <Edit2 size={20} />}
                     </button>
 
                     <div className="text-center mb-6">
-                        <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white text-4xl font-black">
+                        <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg shadow-violet-200 dark:shadow-none">
                             {userProfile.name.charAt(0).toUpperCase()}
                         </div>
 
@@ -108,51 +108,51 @@ export default function ProfilePage() {
                                     type="text"
                                     value={editName}
                                     onChange={(e) => setEditName(e.target.value)}
-                                    className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-center font-bold text-gray-900 dark:text-white dark:bg-gray-800"
+                                    className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-1 text-center font-bold text-slate-900 dark:text-white dark:bg-slate-800 focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none"
                                 />
-                                <button onClick={handleSaveProfile} className="text-green-600 hover:text-green-700">
+                                <button onClick={handleSaveProfile} className="text-green-600 hover:text-green-700 p-1 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors">
                                     <Save size={20} />
                                 </button>
                             </div>
                         ) : (
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
                                 {userProfile.name}
                             </h2>
                         )}
 
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">
                             {userProfile.email}
                         </p>
                     </div>
 
                     <div className="space-y-3">
-                        <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span className="text-gray-600 dark:text-gray-400">Level</span>
-                            <span className="font-bold text-purple-600">
+                        <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                            <span className="text-slate-600 dark:text-slate-400 font-medium">Level</span>
+                            <span className="font-bold text-violet-600">
                                 {userProfile.level}
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span className="text-gray-600 dark:text-gray-400">Total XP</span>
-                            <span className="font-bold text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                            <span className="text-slate-600 dark:text-slate-400 font-medium">Total XP</span>
+                            <span className="font-bold text-slate-900 dark:text-white">
                                 {userProfile.xp.toLocaleString()}
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                            <span className="text-gray-600 dark:text-gray-400 flex items-center">
-                                <Calendar className="mr-2" size={16} />
+                        <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                            <span className="text-slate-600 dark:text-slate-400 font-medium flex items-center">
+                                <Calendar className="mr-2 text-slate-400" size={16} />
                                 Age
                             </span>
-                            <span className="font-bold text-gray-900 dark:text-white">
+                            <span className="font-bold text-slate-900 dark:text-white">
                                 {getAge(userProfile.birthdate)} years
                             </span>
                         </div>
 
-                        <div className="flex items-center justify-between py-2">
-                            <span className="text-gray-600 dark:text-gray-400">Joined</span>
-                            <span className="font-semibold text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-between py-3">
+                            <span className="text-slate-600 dark:text-slate-400 font-medium">Joined</span>
+                            <span className="font-semibold text-slate-900 dark:text-white">
                                 {formatDate(userProfile.created_at)}
                             </span>
                         </div>
@@ -164,12 +164,12 @@ export default function ProfilePage() {
                     animate={{ opacity: 1, x: 0 }}
                     className="space-y-6"
                 >
-                    <div className="card flex items-center justify-center">
+                    <div className="card flex items-center justify-center py-8">
                         <LifeProgressRing birthdate={userProfile.birthdate} birthyear={userProfile.birthyear} />
                     </div>
 
                     <div className="card">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
                             Current Level Progress
                         </h3>
                         <XPBar xp={userProfile.xp} level={userProfile.level} />
@@ -183,7 +183,7 @@ export default function ProfilePage() {
                 className="mb-8"
             >
                 <div className="card">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
                         <Award className="mr-2 text-yellow-500" />
                         Achievements Gallery
                     </h2>
@@ -201,7 +201,7 @@ export default function ProfilePage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleSignOut}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 shadow-lg transition-colors"
+                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-rose-200 dark:shadow-none transition-all"
                 >
                     <LogOut size={20} />
                     <span>Sign Out</span>

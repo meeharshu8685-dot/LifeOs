@@ -35,6 +35,7 @@ export default function LevelUpModal({ isOpen, onClose, level, xp }) {
                             recycle={false}
                             numberOfPieces={500}
                             gravity={0.3}
+                            colors={['#8b5cf6', '#6366f1', '#f59e0b', '#10b981']}
                         />
                     )}
 
@@ -43,70 +44,75 @@ export default function LevelUpModal({ isOpen, onClose, level, xp }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4"
                     >
                         <motion.div
-                            initial={{ scale: 0.5, opacity: 0, y: 100 }}
+                            initial={{ scale: 0.8, opacity: 0, y: 50 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.5, opacity: 0, y: 100 }}
-                            transition={{ type: 'spring', damping: 15 }}
+                            exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                            transition={{ type: 'spring', damping: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="relative bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-3xl p-8 max-w-md w-full shadow-2xl"
+                            className="relative bg-white dark:bg-slate-900 rounded-3xl p-1 max-w-sm w-full shadow-2xl shadow-violet-500/20"
                         >
-                            <button
-                                onClick={onClose}
-                                className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
-                            >
-                                <X size={24} />
-                            </button>
+                            <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-3xl opacity-10 dark:opacity-20 pointer-events-none" />
 
-                            <div className="text-center">
-                                <motion.div
-                                    animate={{
-                                        rotate: [0, -10, 10, -10, 10, 0],
-                                        scale: [1, 1.2, 1.2, 1.2, 1.2, 1],
-                                    }}
-                                    transition={{ duration: 0.6 }}
-                                    className="inline-block mb-6"
-                                >
-                                    <Trophy size={80} className="text-yellow-300" />
-                                </motion.div>
-
-                                <motion.h2
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.2 }}
-                                    className="text-5xl font-black text-white mb-4"
-                                >
-                                    LEVEL UP!
-                                </motion.h2>
-
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ delay: 0.4, type: 'spring' }}
-                                    className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 mb-6"
-                                >
-                                    <p className="text-white/80 text-sm mb-2">You've reached</p>
-                                    <p className="text-7xl font-black text-white mb-2">
-                                        {level}
-                                    </p>
-                                    <p className="text-white/80 text-lg">
-                                        {xp?.toLocaleString()} Total XP
-                                    </p>
-                                </motion.div>
-
-                                <motion.button
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.6 }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
+                            <div className="relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[22px] p-8 border border-white/60 dark:border-slate-700">
+                                <button
                                     onClick={onClose}
-                                    className="bg-white text-purple-600 font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all"
+                                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                                 >
-                                    Continue Your Journey
-                                </motion.button>
+                                    <X size={24} />
+                                </button>
+
+                                <div className="text-center">
+                                    <motion.div
+                                        animate={{
+                                            rotate: [0, -10, 10, -10, 10, 0],
+                                            scale: [1, 1.1, 1.1, 1.1, 1.1, 1],
+                                        }}
+                                        transition={{ duration: 0.8, loop: Infinity, repeatDelay: 2 }}
+                                        className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full mb-6 shadow-lg shadow-amber-200 dark:shadow-amber-900/30 ring-4 ring-white dark:ring-slate-800"
+                                    >
+                                        <Trophy size={48} className="text-white drop-shadow-md" />
+                                    </motion.div>
+
+                                    <motion.h2
+                                        initial={{ y: 10, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-400 dark:to-indigo-400 mb-2"
+                                    >
+                                        LEVEL UP!
+                                    </motion.h2>
+
+                                    <motion.div
+                                        initial={{ scale: 0.9 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ delay: 0.4, type: 'spring' }}
+                                        className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 mb-8 border border-slate-100 dark:border-slate-700"
+                                    >
+                                        <p className="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-bold mb-1">Current Level</p>
+                                        <p className="text-6xl font-black text-slate-900 dark:text-white mb-2 leading-none">
+                                            {level}
+                                        </p>
+                                        <div className="h-1 w-16 bg-gradient-to-r from-violet-500 to-indigo-500 mx-auto rounded-full mb-3" />
+                                        <p className="text-slate-600 dark:text-slate-300 font-medium">
+                                            {xp?.toLocaleString()} <span className="text-slate-400 text-sm font-normal">Total XP</span>
+                                        </p>
+                                    </motion.div>
+
+                                    <motion.button
+                                        initial={{ y: 10, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.6 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={onClose}
+                                        className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                    >
+                                        Continue Journey
+                                    </motion.button>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>
