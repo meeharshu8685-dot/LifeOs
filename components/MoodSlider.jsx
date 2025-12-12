@@ -3,8 +3,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const moodEmojis = ['😢', '😟', '😕', '😐', '🙂', '😊', '😄', '😃', '😁', '🤩'];
+import { Frown, Meh, Smile, Laugh, PartyPopper } from 'lucide-react';
+
 const moodLabels = ['Terrible', 'Bad', 'Poor', 'Okay', 'Fine', 'Good', 'Great', 'Amazing', 'Excellent', 'Perfect'];
+
+function getMoodIcon(value) {
+    if (value <= 2) return <Frown size={48} className="text-rose-500" />;
+    if (value <= 4) return <Meh size={48} className="text-orange-500" />;
+    if (value <= 6) return <Smile size={48} className="text-yellow-500" />;
+    if (value <= 8) return <Laugh size={48} className="text-lime-500" />;
+    return <PartyPopper size={48} className="text-green-500" />;
+}
 
 export default function MoodSlider({ value = 5, onChange }) {
     const [hover, setHover] = useState(null);
@@ -17,11 +26,11 @@ export default function MoodSlider({ value = 5, onChange }) {
                     key={displayValue}
                     initial={{ scale: 0.8, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    className="text-6xl mb-2"
+                    className="mb-2 flex justify-center"
                 >
-                    {moodEmojis[displayValue - 1]}
+                    {getMoodIcon(displayValue)}
                 </motion.div>
-                <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                <p className="text-lg font-semibold text-slate-900 dark:text-white">
                     {moodLabels[displayValue - 1]}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">

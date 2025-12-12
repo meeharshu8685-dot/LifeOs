@@ -108,42 +108,41 @@ export default function JournalPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    🎉 Today's Wins
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                    <PartyPopper size={18} className="text-green-500" /> Today's Wins
                                 </label>
                                 <textarea
                                     value={wins}
                                     onChange={(e) => setWins(e.target.value)}
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-slate-700 dark:text-white resize-none"
                                     placeholder="What went well today?"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    💡 Lessons Learned
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                    <Lightbulb size={18} className="text-blue-500" /> Lessons Learned
                                 </label>
                                 <textarea
                                     value={lessons}
                                     onChange={(e) => setLessons(e.target.value)}
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-slate-700 dark:text-white resize-none"
                                     placeholder="What did you learn?"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                                <Sparkles size={16} className="mr-1 text-yellow-500" />
-                                What I want to improve
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                <Sparkles size={18} className="text-yellow-500" /> What I want to improve
                             </label>
                             <textarea
                                 value={improvements}
                                 onChange={(e) => setImprovements(e.target.value)}
                                 rows={2}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-slate-700 dark:text-white resize-none"
                                 placeholder="One thing to do better tomorrow..."
                             />
                         </div>

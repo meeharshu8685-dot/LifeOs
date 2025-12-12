@@ -83,32 +83,32 @@ export default function AnalyticsPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
             >
-                <div className="card text-center">
-                    <TrendingUp className="mx-auto mb-2 text-green-600" size={32} />
-                    <div className="text-3xl font-black text-gray-900 dark:text-white">
+                <div className="card text-center flex flex-col items-center justify-center">
+                    <TrendingUp className="mb-2 text-green-600" size={32} />
+                    <div className="text-3xl font-black text-slate-900 dark:text-white">
                         {averageMood}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
                         Average Mood (30 days)
                     </div>
                 </div>
 
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">📊</div>
-                    <div className="text-3xl font-black text-gray-900 dark:text-white">
+                <div className="card text-center flex flex-col items-center justify-center">
+                    <BarChart3 className="mb-2 text-blue-600" size={32} />
+                    <div className="text-3xl font-black text-slate-900 dark:text-white">
                         {moodData.length}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
                         Days Tracked
                     </div>
                 </div>
 
-                <div className="card text-center">
-                    <div className="text-3xl mb-2">🎯</div>
-                    <div className="text-3xl font-black text-gray-900 dark:text-white">
+                <div className="card text-center flex flex-col items-center justify-center">
+                    <Target className="mb-2 text-rose-600" size={32} />
+                    <div className="text-3xl font-black text-slate-900 dark:text-white">
                         {moodData.filter(d => d.mood >= 7).length}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
                         Great Days
                     </div>
                 </div>
