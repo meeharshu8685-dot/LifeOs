@@ -3,9 +3,16 @@
 import { createClient } from '@/utils/supabase/server';
 import { XP_REWARDS, calculateSkillLevel, didLevelUp, calculateLevel, checkAchievements, ACHIEVEMENTS } from '@/lib/xpEngine';
 
-export async function addSkillXP(skillId, userId, xpAmount = XP_REWARDS.SKILL_PRACTICE) {
+export async function addSkillXP(skillId, xpAmount = XP_REWARDS.SKILL_PRACTICE) {
     try {
         const supabase = createClient();
+
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
 
         // Get skill details
         const { data: skill } = await supabase
@@ -110,18 +117,25 @@ export async function addSkillXP(skillId, userId, xpAmount = XP_REWARDS.SKILL_PR
     }
 }
 
-export async function createSkill(userId, skillName) {
+export async function createSkill(skillName) {
     try {
         const supabase = createClient();
 
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
+
         const { data, error } = await supabase
             .from('skills')
-            .insert({
+            .insert([{
                 user_id: userId,
                 skill_name: skillName,
                 xp: 0,
                 level: 1,
-            })
+            }])
             .select()
             .single();
 

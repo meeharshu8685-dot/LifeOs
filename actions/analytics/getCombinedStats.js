@@ -1,9 +1,10 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { getTodayString } from '@/lib/dateUtils';
 
 export async function getCombinedStats(userId, days = 30) {
+    const supabase = createClient();
     try {
         const today = new Date();
         const pastDate = new Date();

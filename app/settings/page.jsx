@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { supabase } from "@/lib/supabaseClient";
+
 import { useStore } from '@/lib/store';
 import { updateProfile } from '@/actions/profile/updateProfile';
 import { motion } from 'framer-motion';

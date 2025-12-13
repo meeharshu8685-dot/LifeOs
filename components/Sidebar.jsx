@@ -15,7 +15,7 @@ import {
     Menu,
     Gamepad2
 } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
 const navItems = [
@@ -28,6 +28,7 @@ const navItems = [
 ];
 
 export default function Sidebar() {
+    const supabase = createClient();
     const pathname = usePathname();
     const router = useRouter();
 

@@ -24,7 +24,7 @@ export default function NewQuestModal({ isOpen, onClose, userId, onSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const res = await createQuest({ ...formData, userId });
+        const res = await createQuest(formData);
         setLoading(false);
         if (res.success) {
             onSuccess();

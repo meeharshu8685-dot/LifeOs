@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import { addSkillXP, createSkill } from '@/actions/skills/addXP';
 import { getSkillHistory } from '@/actions/skills/getSkillHistory';
 import SkillCard from '@/components/SkillCard';
@@ -13,6 +13,7 @@ import { Plus, Target, Zap, Clock } from 'lucide-react';
 import { formatDate } from '@/lib/dateUtils';
 
 export default function SkillsPage() {
+    const supabase = createClient();
     const router = useRouter();
     const { user, userProfile, showLevelUp, updateXP } = useStore();
     const [skills, setSkills] = useState([]);
@@ -52,7 +53,7 @@ export default function SkillsPage() {
         e.preventDefault();
         if (!newSkillName.trim()) return;
 
-        const result = await createSkill(user.id, newSkillName);
+        const result = await createSkill(newSkillName);
 
         if (result.success) {
             setNewSkillName('');
@@ -62,7 +63,7 @@ export default function SkillsPage() {
     };
 
     const handleAddXP = async (skillId) => {
-        const result = await addSkillXP(skillId, user.id);
+        const result = await addSkillXP(skillId);
 
         if (result.success) {
             if (result.leveledUp) {

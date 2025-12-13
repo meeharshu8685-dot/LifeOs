@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import AchievementCard from '@/components/AchievementCard';
 import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import { ACHIEVEMENTS } from '@/lib/xpEngine';
 
 export default function AchievementsPage() {
+    const supabase = createClient();
     const router = useRouter();
     const { user } = useStore();
     const [achievements, setAchievements] = useState([]);

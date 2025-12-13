@@ -1,6 +1,7 @@
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 
 export async function updateProfile(userId, formData) {
+    const supabase = createClient();
     try {
         const { error } = await supabase
             .from('users')

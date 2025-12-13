@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import { completeHabit } from '@/actions/habits/completeHabit';
 import HabitCard from '@/components/HabitCard';
 import { motion } from 'framer-motion';
@@ -12,6 +12,7 @@ import { isCompletedToday } from '@/lib/streakUtils';
 import { ACHIEVEMENTS } from '@/lib/xpEngine';
 
 export default function HabitsPage() {
+    const supabase = createClient();
     const router = useRouter();
     const { user, userProfile, showLevelUp, updateXP } = useStore();
     const [habits, setHabits] = useState([]);
@@ -79,7 +80,7 @@ export default function HabitsPage() {
     };
 
     const handleCompleteHabit = async (habitId) => {
-        const result = await completeHabit(habitId, user.id);
+        const result = await completeHabit(habitId);
 
         if (result.success) {
             if (result.leveledUp) {

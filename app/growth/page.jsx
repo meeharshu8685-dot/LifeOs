@@ -36,9 +36,9 @@ export default function GrowthPage() {
 
     const fetchAllData = async () => {
         const [statsRes, goalsRes, questsRes] = await Promise.all([
-            getStats(user.id),
-            getGoals(user.id),
-            getDailyQuests(user.id)
+            getStats(user.id), // existing one still takes ID? need to check
+            getGoals(),
+            getDailyQuests()
         ]);
 
         if (statsRes.success) setStats(statsRes.stats);
@@ -49,7 +49,7 @@ export default function GrowthPage() {
     };
 
     const handleQuestComplete = async (questId) => {
-        const res = await completeQuest(questId, user.id);
+        const res = await completeQuest(questId);
         if (res.success) {
             // Optimistic update or refetch
             fetchAllData();
@@ -94,8 +94,8 @@ export default function GrowthPage() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all ${activeTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                            ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                             }`}
                     >
                         <tab.icon size={18} />
@@ -156,8 +156,8 @@ export default function GrowthPage() {
                             <div className="space-y-4">
                                 {quests.map((quest) => (
                                     <div key={quest.id} className={`p-4 rounded-xl border transition-all flex items-center justify-between ${quest.is_completed
-                                            ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
-                                            : 'bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700'
+                                        ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
+                                        : 'bg-white border-slate-200 dark:bg-slate-800 dark:border-slate-700'
                                         }`}>
                                         <div className="flex items-center gap-4">
                                             <div className={`p-3 rounded-full ${quest.is_completed ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'
@@ -227,8 +227,8 @@ export default function GrowthPage() {
                                         <div className="flex justify-between items-start mb-2">
                                             <div className="font-bold text-lg text-slate-900 dark:text-white">{goal.title}</div>
                                             <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${goal.priority === 'High' ? 'bg-red-100 text-red-600' :
-                                                    goal.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' :
-                                                        'bg-blue-100 text-blue-600'
+                                                goal.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' :
+                                                    'bg-blue-100 text-blue-600'
                                                 }`}>
                                                 {goal.priority}
                                             </div>

@@ -10,11 +10,12 @@ import AchievementGrid from '@/components/AchievementGrid';
 import LifeChaptersList from '@/components/LifeChaptersList';
 import PhilosophySection from '@/components/PhilosophySection';
 import { formatDate, getAge } from '@/lib/dateUtils';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import { getChapters } from '@/actions/profile/chapters';
 import { getPhilosophy } from '@/actions/profile/philosophy';
 
 export default function ProfilePage() {
+    const supabase = createClient();
     const router = useRouter();
     const { user, userProfile, signOut } = useStore();
     const [achievements, setAchievements] = useState([]);

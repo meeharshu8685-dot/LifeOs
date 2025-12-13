@@ -3,13 +3,14 @@
 import './globals.css';
 import { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/client';
 import SplashScreen from '@/components/SplashScreen';
 import Sidebar from '@/components/Sidebar';
 import ParallaxBackground from '@/components/ParallaxBackground';
 import LevelUpModal from '@/components/LevelUpModal';
 
 export default function RootLayout({ children }) {
+    const supabase = createClient();
     const [showSplash, setShowSplash] = useState(true);
     const { user, setUser, fetchUserProfile, showLevelUpModal, hideLevelUp, levelUpData } = useStore();
 

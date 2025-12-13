@@ -1,8 +1,9 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 
 export async function getSkillHistory(userId, days = 7) {
+    const supabase = createClient();
     try {
         const today = new Date();
         const pastDate = new Date();

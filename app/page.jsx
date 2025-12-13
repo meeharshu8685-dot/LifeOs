@@ -27,7 +27,7 @@ export default function DashboardPage() {
     const fetchStats = async () => {
         if (!user) return;
         // We only need basic stats for the dashboard now
-        const result = await getStats(user.id);
+        const result = await getStats();
         if (result.success) {
             setStats(result.stats);
         }

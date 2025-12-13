@@ -1,11 +1,19 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { calculateJournalStreak } from '@/lib/streakUtils';
 import { calculateLifeBalanceScore, getLifeAreasBreakdown } from '@/lib/lifeBalance';
 
-export async function getStats(userId) {
+export async function getStats() {
+    const supabase = createClient();
     try {
+        // Get authenticated user
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+        if (authError || !authUser) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = authUser.id;
+
         // Get user profile
         const { data: user, error: userError } = await supabase
             .from('users')
@@ -107,8 +115,16 @@ export async function getStats(userId) {
     }
 }
 
-export async function getMoodAnalytics(userId, days = 30) {
+export async function getMoodAnalytics(days = 30) {
+    const supabase = createClient();
     try {
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
+
         const { data, error } = await supabase
             .from('journal')
             .select('date, mood')

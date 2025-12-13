@@ -5,10 +5,17 @@ import { XP_REWARDS, didLevelUp, calculateLevel, checkAchievements, ACHIEVEMENTS
 import { calculateStreak, isCompletedToday as checkIsCompletedToday } from '@/lib/streakUtils';
 import { getTodayString } from '@/lib/dateUtils';
 
-export async function completeHabit(habitId, userId) {
+export async function completeHabit(habitId) {
     try {
         const supabase = createClient();
         const today = getTodayString();
+
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
 
         // Check if already completed today
         const { data: existingLog } = await supabase
@@ -27,6 +34,7 @@ export async function completeHabit(habitId, userId) {
             .from('habits')
             .select('*')
             .eq('id', habitId)
+            .eq('user_id', userId) // Ensure habit belongs to user
             .single();
 
         if (!habit) {

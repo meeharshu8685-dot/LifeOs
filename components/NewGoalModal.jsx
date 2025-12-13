@@ -21,7 +21,7 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const res = await createGoal({ ...formData, userId });
+        const res = await createGoal(formData);
         setLoading(false);
         if (res.success) {
             onSuccess();
@@ -35,7 +35,8 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
                 targetDate: ''
             });
         } else {
-            alert('Failed to create goal');
+            console.error('Creation failed:', res.error);
+            alert(`Failed to create goal: ${res.error}`);
         }
     };
 

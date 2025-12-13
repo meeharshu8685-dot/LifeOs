@@ -5,9 +5,17 @@ import { XP_REWARDS, didLevelUp, calculateLevel } from '@/lib/xpEngine';
 import { calculateJournalStreak } from '@/lib/streakUtils';
 import { getTodayString } from '@/lib/dateUtils';
 
-export async function addJournalEntry(userId, mood, wins, lessons, improvements) {
+export async function addJournalEntry(mood, wins, lessons, improvements) {
     try {
         const supabase = createClient();
+
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
+
         const today = getTodayString();
 
         // Check if entry already exists for today
@@ -110,9 +118,17 @@ export async function addJournalEntry(userId, mood, wins, lessons, improvements)
     }
 }
 
-export async function getJournalEntries(userId, limit = 10) {
+export async function getJournalEntries(limit = 10) {
     try {
         const supabase = createClient();
+
+        // Get authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            throw new Error('Unauthorized: No user found');
+        }
+        const userId = user.id;
+
         const { data, error } = await supabase
             .from('journal')
             .select('*')

@@ -33,7 +33,7 @@ export default function JournalPage() {
     const fetchEntries = async () => {
         if (!user) return;
 
-        const result = await getJournalEntries(user.id, 30);
+        const result = await getJournalEntries(30);
         if (result.success) {
             setEntries(result.entries);
         }
@@ -44,7 +44,7 @@ export default function JournalPage() {
         e.preventDefault();
         setSubmitting(true);
 
-        const result = await addJournalEntry(user.id, mood, wins, lessons, improvements);
+        const result = await addJournalEntry(mood, wins, lessons, improvements);
 
         if (result.success) {
             if (!result.isUpdate && result.leveledUp) {
