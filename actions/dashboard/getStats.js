@@ -2,6 +2,7 @@
 
 import { supabase } from '@/lib/supabaseClient';
 import { calculateJournalStreak } from '@/lib/streakUtils';
+import { calculateLifeBalanceScore, getLifeAreasBreakdown } from '@/lib/lifeBalance';
 
 export async function getStats(userId) {
     try {
@@ -67,6 +68,17 @@ export async function getStats(userId) {
         // Calculate total active streaks
         const activeStreaks = habits?.filter(h => h.streak > 0).length || 0;
 
+        // Calculate Life Balance metrics
+        const tempStats = {
+            habitData: [{ completionRate: activeStreaks * 10 }], // simplified for now, ideally pass real trend
+            moodData: journalEntries?.map(j => ({ mood: j.mood })) || [],
+            skills: skills,
+            habits: habits
+        };
+
+        const lifeBalance = calculateLifeBalanceScore(tempStats);
+        const lifeAreas = getLifeAreasBreakdown(tempStats);
+
         return {
             success: true,
             stats: {
@@ -85,6 +97,8 @@ export async function getStats(userId) {
                     totalJournalEntries: journalEntries?.length || 0,
                     totalAchievements: achievements?.length || 0,
                 },
+                lifeBalance,
+                lifeAreas,
             },
         };
     } catch (error) {

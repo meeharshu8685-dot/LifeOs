@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS habits (
   name TEXT NOT NULL,
   streak INTEGER DEFAULT 0,
   last_completed DATE,
+  category TEXT DEFAULT 'Personal Growth',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS skills (
   skill_name TEXT NOT NULL,
   xp INTEGER DEFAULT 0,
   level INTEGER DEFAULT 1,
+  category TEXT DEFAULT 'Personal Growth',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -69,6 +71,40 @@ CREATE TABLE IF NOT EXISTS achievements (
   type TEXT NOT NULL,
   unlocked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id, type)
+);
+
+-- Life Chapters table
+CREATE TABLE IF NOT EXISTS life_chapters (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  name TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE,
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Personal Philosophy table
+CREATE TABLE IF NOT EXISTS personal_philosophy (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  principle TEXT NOT NULL,
+  description TEXT,
+  type TEXT DEFAULT 'principle', -- 'principle', 'rule'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Goals table (Long-term)
+CREATE TABLE IF NOT EXISTS goals (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  status TEXT DEFAULT 'active', -- 'active', 'completed', 'archived'
+  target_date DATE,
+  progress INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Row Level Security (RLS) Policies
@@ -147,7 +183,34 @@ CREATE POLICY "Users can view own achievements" ON achievements
 CREATE POLICY "Users can create own achievements" ON achievements
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Functions for updated_at trigger
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Life Chapters policies
+ALTER TABLE life_chapters ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own chapters" ON life_chapters
+  FOR SELECT USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can manage own chapters" ON life_chapters
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Personal Philosophy policies
+ALTER TABLE personal_philosophy ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own philosophy" ON personal_philosophy
+  FOR SELECT USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can manage own philosophy" ON personal_philosophy
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Goals policies
+ALTER TABLE goals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own goals" ON goals
+  FOR SELECT USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can manage own goals" ON goals
+  FOR ALL USING (auth.uid() = user_id);
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN

@@ -21,10 +21,9 @@ import { useRouter } from 'next/navigation';
 const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
     { href: '/habits', icon: CheckSquare, label: 'Habits' },
-    { href: '/skills', icon: Target, label: 'Skills' },
+    { href: '/growth', icon: Target, label: 'Growth' },
+    { href: '/insights', icon: BarChart3, label: 'Insights' },
     { href: '/journal', icon: BookOpen, label: 'Journal' },
-    { href: '/analytics', icon: BarChart3, label: 'Analytics' },
-    { href: '/achievements', icon: Trophy, label: 'Awards' },
     { href: '/profile', icon: User, label: 'Profile' },
 ];
 
@@ -163,7 +162,7 @@ export default function Sidebar() {
                         const mobileItems = [
                             { href: '/', icon: Home, label: 'Home' },
                             { href: '/habits', icon: CheckSquare, label: 'Habits' },
-                            { href: '/skills', icon: Target, label: 'Skills' },
+                            { href: '/growth', icon: Target, label: 'Growth' },
                             { href: '/journal', icon: BookOpen, label: 'Journal' },
                             { href: '/profile', icon: User, label: 'Profile' },
                         ];
