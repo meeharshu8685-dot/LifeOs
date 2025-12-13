@@ -1,7 +1,8 @@
 'use server';
 
 import { supabase } from '@/lib/supabaseClient';
-import { updateXP } from '@/lib/xpEngine';
+// import { updateXP } from '@/lib/xpEngine'; // Function doesn't exist
+
 import { revalidatePath } from 'next/cache';
 
 export async function createQuest(data) {
@@ -77,8 +78,24 @@ export async function completeQuest(questId, userId) {
 
         if (updateError) throw updateError;
 
-        // 3. Award XP
-        await updateXP(userId, quest.xp_reward);
+        // 3. Award XP manually since updateXP helper doesn't exist
+        const { data: userProfile } = await supabase
+            .from('users')
+            .select('xp')
+            .eq('id', userId)
+            .single();
+
+        if (userProfile) {
+            // Import dynamically to avoid circular dependency issues if any, though here it's fine
+            const { calculateLevel } = require('@/lib/xpEngine');
+            const newXP = userProfile.xp + quest.xp_reward;
+            const newLevel = calculateLevel(newXP);
+
+            await supabase
+                .from('users')
+                .update({ xp: newXP, level: newLevel })
+                .eq('id', userId);
+        }
 
         revalidatePath('/growth');
         revalidatePath('/'); // Update Dashboard XP too
