@@ -103,8 +103,23 @@ CREATE TABLE IF NOT EXISTS goals (
   status TEXT DEFAULT 'active', -- 'active', 'completed', 'archived'
   target_date DATE,
   progress INTEGER DEFAULT 0,
+  category TEXT DEFAULT 'Personal Growth',
+  priority TEXT DEFAULT 'Medium', -- Low, Medium, High
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Quests table (Daily)
+CREATE TABLE IF NOT EXISTS quests (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  difficulty TEXT DEFAULT 'Medium', -- Easy, Medium, Hard
+  is_completed BOOLEAN DEFAULT FALSE,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
+  category TEXT DEFAULT 'Personal Growth',
+  xp_reward INTEGER DEFAULT 10,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Row Level Security (RLS) Policies
@@ -210,6 +225,15 @@ CREATE POLICY "Users can view own goals" ON goals
   FOR SELECT USING (auth.uid() = user_id);
   
 CREATE POLICY "Users can manage own goals" ON goals
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Quests policies
+ALTER TABLE quests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own quests" ON quests
+  FOR SELECT USING (auth.uid() = user_id);
+  
+CREATE POLICY "Users can manage own quests" ON quests
   FOR ALL USING (auth.uid() = user_id);
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

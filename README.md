@@ -191,7 +191,7 @@ npm run lint
   SplashScreen.jsx
   Navbar.jsx
   XPBar.jsx
-  LifeProgressRing.jsx
+
   YearProgressRing.jsx
   HabitCard.jsx
   SkillCard.jsx

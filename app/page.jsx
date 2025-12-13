@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { getStats } from '@/actions/dashboard/getStats';
 import XPBar from '@/components/XPBar';
-import LifeProgressRing from '@/components/LifeProgressRing';
 import HabitCard from '@/components/HabitCard';
 import { motion } from 'framer-motion';
 import { Sparkles, Gamepad2, Flame, Zap, BookOpen } from 'lucide-react';
@@ -82,7 +81,11 @@ export default function DashboardPage() {
                     className="card flex items-center justify-center py-4"
                 >
                     <div className="scale-90">
-                        <LifeProgressRing birthdate={userProfile.birthdate} birthyear={userProfile.birthyear} />
+                        {/* LifeProgressRing removed */}
+                        <div className="text-center p-4">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Welcome Back</h3>
+                            <p className="text-slate-600 dark:text-slate-400">Ready to conquer the day?</p>
+                        </div>
                     </div>
                 </motion.div>
             </div>
