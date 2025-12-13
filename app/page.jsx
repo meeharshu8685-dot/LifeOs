@@ -123,7 +123,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Bottom: Quick Stats / Continue */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -145,27 +145,6 @@ export default function DashboardPage() {
                     <div className="font-black text-2xl text-slate-800 dark:text-slate-200">{stats?.skills?.length || 0}</div>
                     <div className="text-xs font-bold text-slate-500 uppercase">Skills</div>
                 </motion.div>
-
-                <Link href="/journal" className="block">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                        className="bg-pink-50 dark:bg-pink-900/10 p-4 rounded-xl border border-pink-100 dark:border-pink-800/30 text-center hover:bg-pink-100 transition-colors cursor-pointer h-full flex flex-col justify-center"
-                    >
-                        {moodToday ? (
-                            <>
-                                <div className="font-black text-2xl text-pink-500">{moodToday}/10</div>
-                                <div className="text-xs font-bold text-slate-500 uppercase">Mood Logged</div>
-                            </>
-                        ) : (
-                            <>
-                                <BookOpen className="mx-auto text-pink-500 mb-1" size={24} />
-                                <div className="text-xs font-bold text-pink-600 uppercase">Log Mood</div>
-                            </>
-                        )}
-                    </motion.div>
-                </Link>
             </div>
         </div>
     );

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Target } from 'lucide-react';
 import { LIFE_AREAS } from '@/lib/lifeBalance';
 import { createGoal } from '@/actions/growth/goals';
+import { updateGoal } from '@/actions/growth/updateGoal';
 
-export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
+export default function NewGoalModal({ isOpen, onClose, userId, onSuccess, initialData = null }) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
@@ -16,17 +17,16 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
         targetDate: ''
     });
 
-    if (!isOpen) return null;
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const res = await createGoal(formData);
-        setLoading(false);
-        if (res.success) {
-            onSuccess();
-            onClose();
-            // Reset form
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                title: initialData.title || '',
+                description: initialData.description || '',
+                category: initialData.category || 'Personal Growth',
+                priority: initialData.priority || 'Medium',
+                targetDate: initialData.target_date ? initialData.target_date.split('T')[0] : ''
+            });
+        } else {
             setFormData({
                 title: '',
                 description: '',
@@ -34,9 +34,41 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
                 priority: 'Medium',
                 targetDate: ''
             });
+        }
+    }, [initialData, isOpen]);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        let res;
+        if (initialData) {
+            res = await updateGoal(initialData.id, {
+                ...formData,
+                target_date: formData.targetDate || null
+            });
         } else {
-            console.error('Creation failed:', res.error);
-            alert(`Failed to create goal: ${res.error}`);
+            res = await createGoal(formData);
+        }
+
+        setLoading(false);
+        if (res.success) {
+            onSuccess();
+            onClose();
+            if (!initialData) {
+                setFormData({
+                    title: '',
+                    description: '',
+                    category: 'Personal Growth',
+                    priority: 'Medium',
+                    targetDate: ''
+                });
+            }
+        } else {
+            console.error('Operation failed:', res.error);
+            alert(`Failed to ${initialData ? 'update' : 'create'} goal: ${res.error}`);
         }
     };
 
@@ -53,7 +85,7 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <Target className="text-indigo-500" />
-                                New Long-term Goal
+                                {initialData ? 'Edit Goal' : 'New Long-term Goal'}
                             </h2>
                             <button onClick={onClose} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                                 <X size={24} />
@@ -124,7 +156,7 @@ export default function NewGoalModal({ isOpen, onClose, userId, onSuccess }) {
                                 disabled={loading}
                                 className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-50"
                             >
-                                {loading ? 'Creating...' : 'Create Goal'}
+                                {loading ? 'Saving...' : (initialData ? 'Update Goal' : 'Create Goal')}
                             </button>
                         </form>
                     </div>

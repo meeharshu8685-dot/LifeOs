@@ -13,10 +13,15 @@ import {
     Settings,
     LogOut,
     Menu,
-    Gamepad2
+    Gamepad2,
+    Sun,
+    Moon,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/context/ThemeContext';
 
 const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
@@ -31,6 +36,7 @@ export default function Sidebar() {
     const supabase = createClient();
     const pathname = usePathname();
     const router = useRouter();
+    const { theme, toggleTheme, isMonochrome, toggleMonochrome } = useTheme();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -124,7 +130,30 @@ export default function Sidebar() {
                     })}
 
                     {/* Settings & Logout separate block */}
-                    <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800">
+                    <div className="pt-4 mt-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                        {/* Theme Toggles */}
+                        <div className="flex gap-2 px-4">
+                            <button
+                                onClick={toggleTheme}
+                                className="flex-1 flex items-center justify-center gap-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                title="Toggle Theme"
+                            >
+                                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                                <span className="text-xs font-bold">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+                            </button>
+                            <button
+                                onClick={toggleMonochrome}
+                                className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-xl transition-colors ${isMonochrome
+                                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                    }`}
+                                title="Toggle Grayscale"
+                            >
+                                {isMonochrome ? <EyeOff size={18} /> : <Eye size={18} />}
+                                <span className="text-xs font-bold">B&W</span>
+                            </button>
+                        </div>
+
                         <Link
                             href="/settings"
                             onClick={closeSidebar}

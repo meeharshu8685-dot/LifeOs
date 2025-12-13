@@ -1,17 +1,17 @@
 'use client';
 
 import './globals.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useStore } from '@/lib/store';
 import { createClient } from '@/utils/supabase/client';
 import SplashScreen from '@/components/SplashScreen';
 import Sidebar from '@/components/Sidebar';
 import ParallaxBackground from '@/components/ParallaxBackground';
 import LevelUpModal from '@/components/LevelUpModal';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export default function RootLayout({ children }) {
     const supabase = createClient();
-    const [showSplash, setShowSplash] = useState(true);
     const { user, setUser, fetchUserProfile, showLevelUpModal, hideLevelUp, levelUpData } = useStore();
 
     useEffect(() => {
@@ -33,14 +33,8 @@ export default function RootLayout({ children }) {
             }
         });
 
-        // Hide splash screen after delay
-        const splashTimer = setTimeout(() => {
-            setShowSplash(false);
-        }, 2000);
-
         return () => {
             subscription.unsubscribe();
-            clearTimeout(splashTimer);
         };
     }, [setUser, fetchUserProfile]);
 
@@ -53,24 +47,26 @@ export default function RootLayout({ children }) {
                 <link rel="icon" href="/favicon.ico" />
             </head>
             <body>
-                {showSplash && <SplashScreen />}
+                <ThemeProvider>
+                    <SplashScreen />
 
-                <ParallaxBackground />
+                    <ParallaxBackground />
 
-                <Sidebar />
+                    <Sidebar />
 
-                <div className="transition-all duration-300">
-                    <div className="min-h-screen pb-20 md:pb-8 md:pt-16">
-                        {children}
+                    <div className="transition-all duration-300">
+                        <div className="min-h-screen pb-20 md:pb-8 md:pt-16">
+                            {children}
+                        </div>
                     </div>
-                </div>
 
-                <LevelUpModal
-                    isOpen={showLevelUpModal}
-                    onClose={hideLevelUp}
-                    level={levelUpData?.level}
-                    xp={levelUpData?.xp}
-                />
+                    <LevelUpModal
+                        isOpen={showLevelUpModal}
+                        onClose={hideLevelUp}
+                        level={levelUpData?.level}
+                        xp={levelUpData?.xp}
+                    />
+                </ThemeProvider>
             </body>
         </html>
     );

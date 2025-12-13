@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { signup } from '@/actions/auth/signup';
+import { setupUserPin } from '@/actions/auth/setupPin';
 import { motion } from 'framer-motion';
-import { ArrowRight, Lock, User, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowRight, Lock, User, AlertCircle, ShieldAlert } from 'lucide-react';
 
-export default function SignupPage() {
+export default function SetupPinPage() {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [pin, setPin] = useState('');
@@ -32,17 +31,10 @@ export default function SignupPage() {
             return;
         }
 
-        // Basic username validation check
-        if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
-            setError('Username must be 3-20 alphanumeric characters');
-            setLoading(false);
-            return;
-        }
-
-        const result = await signup(username, pin);
+        const result = await setupUserPin(username, pin);
 
         if (result.success) {
-            router.push('/'); // Should be logged in automatically
+            router.push('/');
             router.refresh();
         } else {
             setError(result.error);
@@ -53,13 +45,16 @@ export default function SignupPage() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card w-full max-w-md p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="card w-full max-w-md p-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border-t-4 border-amber-500"
             >
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">Join LifeOS</h1>
-                    <p className="text-slate-600 dark:text-slate-400">Secure. Private. Focused.</p>
+                    <ShieldAlert size={48} className="mx-auto text-amber-500 mb-4" />
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Security Update</h1>
+                    <p className="text-slate-600 dark:text-slate-400">
+                        LifeOS is upgrading to a secure Username & PIN system. Please set up your new credentials to continue.
+                    </p>
                 </div>
 
                 {error && (
@@ -90,7 +85,7 @@ export default function SignupPage() {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
-                                PIN
+                                New PIN
                             </label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -112,7 +107,7 @@ export default function SignupPage() {
                                 Confirm
                             </label>
                             <div className="relative">
-                                <CheckCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-slate-400" />
                                 <input
                                     type="password"
                                     inputMode="numeric"
@@ -128,34 +123,21 @@ export default function SignupPage() {
                         </div>
                     </div>
 
-                    <p className="text-xs text-slate-500 text-center">
-                        Your PIN is the only way to access your account. Don't lose it.
-                    </p>
-
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-200 dark:shadow-none flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {loading ? (
                             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
                             <>
-                                <span>Create Account</span>
+                                <span>Save Credentials</span>
                                 <ArrowRight size={20} />
                             </>
                         )}
                     </button>
                 </form>
-
-                <div className="mt-8 text-center">
-                    <p className="text-slate-600 dark:text-slate-400">
-                        Already have an account?{' '}
-                        <Link href="/auth/login" className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">
-                            Login
-                        </Link>
-                    </p>
-                </div>
             </motion.div>
         </div>
     );

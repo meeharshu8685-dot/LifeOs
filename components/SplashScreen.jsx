@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Gamepad2 } from 'lucide-react';
 
 export default function SplashScreen() {
     const [isVisible, setIsVisible] = useState(true);
@@ -9,64 +10,100 @@ export default function SplashScreen() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(false);
-        }, 1500);
+        }, 2200); // Slightly longer for the animation to complete
 
         return () => clearTimeout(timer);
     }, []);
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3
+            }
+        },
+        exit: {
+            y: '-100%',
+            transition: {
+                duration: 0.8,
+                ease: [0.76, 0, 0.24, 1] // Custom bezier for smooth "curtain" lift
+            }
+        }
+    };
+
+    const letterVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                type: "spring",
+                damping: 12,
+                stiffness: 200
+            }
+        }
+    };
+
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {isVisible && (
                 <motion.div
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden"
+                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 overflow-hidden"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
                 >
-                    {/* Abstract Background Shapes */}
-                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-200/30 rounded-full blur-[100px]" />
-                        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-200/30 rounded-full blur-[100px]" />
+                    {/* Background Elements */}
+                    <div className="absolute inset-0 z-0">
+                        <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-violet-500/10 rounded-full blur-[120px] animate-pulse-slow" />
+                        <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '1s' }} />
                     </div>
 
-                    <motion.div
-                        animate={{
-                            scale: [1, 1.05, 1],
-                        }}
-                        transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                        }}
-                        className="mb-8 z-10"
-                    >
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-indigo-600 blur-3xl opacity-20 animate-pulse-slow"></div>
-                            <h1 className="relative text-7xl md:text-8xl font-black bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600 tracking-tighter">
-                                LifeOS
-                            </h1>
+                    {/* Logo & Text */}
+                    <div className="z-10 flex flex-col items-center">
+                        <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1, rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 0.8, ease: "backOut" }}
+                            className="mb-6 p-4 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl shadow-2xl shadow-indigo-500/30"
+                        >
+                            <Gamepad2 size={48} className="text-white" />
+                        </motion.div>
+
+                        <div className="flex overflow-hidden mb-2">
+                            {['L', 'i', 'f', 'e', 'O', 'S'].map((letter, index) => (
+                                <motion.span
+                                    key={index}
+                                    variants={letterVariants}
+                                    className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tighter"
+                                >
+                                    {letter}
+                                </motion.span>
+                            ))}
                         </div>
-                    </motion.div>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-xl md:text-2xl text-slate-500 font-light tracking-wide z-10"
-                    >
-                        Turn your life into a game
-                    </motion.p>
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1, duration: 0.5 }}
+                            className="text-lg md:text-xl text-slate-500 dark:text-slate-400 font-medium tracking-wide"
+                        >
+                            Gamify Your Existence
+                        </motion.p>
+                    </div>
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="mt-12 flex space-x-2 z-10"
-                    >
-                        <div className="w-3 h-3 bg-violet-500 rounded-full animate-bounce"></div>
-                        <div className="w-3 h-3 bg-indigo-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-3 h-3 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </motion.div>
+                    {/* Progress Bar */}
+                    <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden z-10">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }}
+                            className="h-full bg-gradient-to-r from-violet-500 to-indigo-500"
+                        />
+                    </div>
                 </motion.div>
             )}
         </AnimatePresence>

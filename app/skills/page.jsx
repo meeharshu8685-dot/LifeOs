@@ -19,8 +19,12 @@ export default function SkillsPage() {
     const [skills, setSkills] = useState([]);
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [newSkillName, setNewSkillName] = useState('');
+
+    // Form State
+    const [skillName, setSkillName] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const [creating, setCreating] = useState(false);
+    const [editingSkill, setEditingSkill] = useState(null);
 
     useEffect(() => {
         if (!user) {
@@ -49,27 +53,90 @@ export default function SkillsPage() {
         setLoading(false);
     };
 
-    const handleCreateSkill = async (e) => {
+    const startEdit = (skill) => {
+        setEditingSkill(skill);
+        setSkillName(skill.skill_name);
+        setShowForm(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setEditingSkill(null);
+        setSkillName('');
+        setShowForm(false);
+    };
+
+    const handleCreateOrUpdateSkill = async (e) => {
         e.preventDefault();
-        if (!newSkillName.trim()) return;
+        if (!skillName.trim() || creating) return;
 
-        const result = await createSkill(newSkillName);
+        setCreating(true);
 
-        if (result.success) {
-            setNewSkillName('');
-            setShowForm(false);
-            fetchSkills();
+        if (editingSkill) {
+            // Optimistic Update for Edit
+            const updatedSkills = skills.map(s =>
+                s.id === editingSkill.id ? { ...s, skill_name: skillName } : s
+            );
+            setSkills(updatedSkills);
+            setShowForm(false); // Close immediately for speed
+
+            // Server Action
+            // We need to dynamically import or use the action we created
+            const { updateSkill } = require('@/actions/skills/updateSkill');
+            const result = await updateSkill(editingSkill.id, { skill_name: skillName });
+
+            if (!result.success) {
+                // Revert on failure
+                fetchSkills();
+                alert('Failed to update skill');
+            } else {
+                setEditingSkill(null);
+                setSkillName('');
+            }
+        } else {
+            // Creation flow
+            // Hard to optimistic update creation without ID, so we wait but show loading
+            const result = await createSkill(skillName);
+            if (result.success) {
+                setSkillName('');
+                setShowForm(false);
+                // fetchSkills will add it to the list
+                fetchSkills();
+            }
         }
+        setCreating(false);
     };
 
     const handleAddXP = async (skillId) => {
+        // Find skill to update optimistically
+        const skillIndex = skills.findIndex(s => s.id === skillId);
+        if (skillIndex === -1) return;
+
+        const skill = skills[skillIndex];
+        // Calculate expected new values locally to show INSTANT feedback
+        // We know standard reward is 8 XP usually (from implicit knowledge or we could duplicate constant)
+        const XP_AMOUNT = 8;
+        const newSkillXP = skill.xp + XP_AMOUNT;
+        // Simple approximation or we need `calculateSkillLevel` helper available on client
+        // For now, let's just update XP visually and let background refresh handle level up nuances
+
+        const optimisticSkills = [...skills];
+        optimisticSkills[skillIndex] = { ...skill, xp: newSkillXP };
+        setSkills(optimisticSkills);
+
         const result = await addSkillXP(skillId);
 
         if (result.success) {
             if (result.leveledUp) {
                 showLevelUp({ level: result.newLevel, xp: result.newXP });
             }
+            // Sync final state
             updateXP(result.newXP, result.newLevel);
+            // We can skip full refetch if we trust the return data, 
+            // but let's do a silent refetch to ensure consistency
+            fetchSkills();
+        } else {
+            // Revert on error
             fetchSkills();
         }
     };
@@ -103,7 +170,14 @@ export default function SkillsPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => setShowForm(!showForm)}
+                onClick={() => {
+                    if (showForm && !editingSkill) setShowForm(false);
+                    else {
+                        setEditingSkill(null);
+                        setSkillName('');
+                        setShowForm(true);
+                    }
+                }}
                 className="mb-6 w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center space-x-2 shadow-lg shadow-indigo-200 dark:shadow-none transition-all"
             >
                 <Plus size={20} />
@@ -114,28 +188,37 @@ export default function SkillsPage() {
                 <motion.form
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    onSubmit={handleCreateSkill}
+                    onSubmit={handleCreateOrUpdateSkill}
                     className="mb-6 card overflow-hidden"
                 >
                     <div className="p-1">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-bold text-slate-700 dark:text-slate-300">
+                                {editingSkill ? 'Edit Skill' : 'New Skill'}
+                            </h3>
+                        </div>
                         <input
                             type="text"
-                            value={newSkillName}
-                            onChange={(e) => setNewSkillName(e.target.value)}
+                            value={skillName}
+                            onChange={(e) => setSkillName(e.target.value)}
                             placeholder="e.g., Python, Guitar, Public Speaking"
                             className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-slate-800 dark:text-white mb-4 shadow-sm"
+                            disabled={creating}
+                            autoFocus
                         />
                         <div className="flex space-x-3">
                             <button
                                 type="submit"
-                                className="flex-1 bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors shadow-md"
+                                disabled={creating}
+                                className="flex-1 bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors shadow-md disabled:bg-slate-400 disabled:cursor-not-allowed"
                             >
-                                Create
+                                {creating ? 'Saving...' : (editingSkill ? 'Update' : 'Create')}
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setShowForm(false)}
-                                className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3 px-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                                onClick={cancelEdit}
+                                disabled={creating}
+                                className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3 px-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-50"
                             >
                                 Cancel
                             </button>
@@ -155,7 +238,16 @@ export default function SkillsPage() {
                             </div>
                         ) : (
                             skills.map((skill) => (
-                                <div key={skill.id} className="relative">
+                                <div key={skill.id} className="relative group">
+                                    <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={() => startEdit(skill)}
+                                            className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-500 hover:text-indigo-600 transition-colors shadow-sm"
+                                            title="Edit Skill"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                        </button>
+                                    </div>
                                     <SkillCard skill={skill} />
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
@@ -203,7 +295,7 @@ export default function SkillsPage() {
                                     <div key={log.id} className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 last:border-0 last:pb-0">
                                         <div>
                                             <p className="text-sm font-bold text-slate-900 dark:text-white">
-                                                {log.skills?.name || 'Unknown Skill'}
+                                                {log.skills?.name || log.skill_name || 'Skill'}
                                             </p>
                                             <p className="text-xs text-slate-500">
                                                 {formatDate(log.created_at, 'MMM dd, HH:mm')}

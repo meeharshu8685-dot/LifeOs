@@ -26,6 +26,9 @@ export default function GrowthPage() {
     const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
     const [isQuestModalOpen, setIsQuestModalOpen] = useState(false);
 
+    // Edit state
+    const [editingGoal, setEditingGoal] = useState(null);
+
     useEffect(() => {
         if (!user) {
             router.push('/auth/login');
@@ -46,6 +49,16 @@ export default function GrowthPage() {
         if (questsRes.success) setQuests(questsRes.quests);
 
         setLoading(false);
+    };
+
+    const openNewGoalModal = () => {
+        setEditingGoal(null);
+        setIsGoalModalOpen(true);
+    };
+
+    const openEditGoalModal = (goal) => {
+        setEditingGoal(goal);
+        setIsGoalModalOpen(true);
     };
 
     const handleQuestComplete = async (questId) => {
@@ -213,7 +226,7 @@ export default function GrowthPage() {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Long-term Goals</h2>
                             <button
-                                onClick={() => setIsGoalModalOpen(true)}
+                                onClick={openNewGoalModal}
                                 className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg shadow-indigo-200 dark:shadow-none"
                             >
                                 <Plus size={18} /> New Goal
@@ -223,8 +236,15 @@ export default function GrowthPage() {
                         {goals.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {goals.map((goal) => (
-                                    <div key={goal.id} className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                                        <div className="flex justify-between items-start mb-2">
+                                    <div key={goal.id} className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative group">
+                                        <button
+                                            onClick={() => openEditGoalModal(goal)}
+                                            className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            title="Edit Goal"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                        </button>
+                                        <div className="flex justify-between items-start mb-2 pr-8">
                                             <div className="font-bold text-lg text-slate-900 dark:text-white">{goal.title}</div>
                                             <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${goal.priority === 'High' ? 'bg-red-100 text-red-600' :
                                                 goal.priority === 'Medium' ? 'bg-yellow-100 text-yellow-600' :
@@ -249,7 +269,7 @@ export default function GrowthPage() {
                                 <Target className="mx-auto text-slate-400 mb-4" size={48} />
                                 <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300">No Long-term Goals</h3>
                                 <p className="text-slate-500 mb-4">Set your sights on the future.</p>
-                                <button onClick={() => setIsGoalModalOpen(true)} className="btn-primary">Create Goal</button>
+                                <button onClick={openNewGoalModal} className="btn-primary">Create Goal</button>
                             </div>
                         )}
                     </motion.div>
@@ -258,9 +278,13 @@ export default function GrowthPage() {
 
             <NewGoalModal
                 isOpen={isGoalModalOpen}
-                onClose={() => setIsGoalModalOpen(false)}
+                onClose={() => {
+                    setIsGoalModalOpen(false);
+                    setEditingGoal(null);
+                }}
                 userId={user.id}
                 onSuccess={fetchAllData}
+                initialData={editingGoal}
             />
 
             <NewQuestModal
