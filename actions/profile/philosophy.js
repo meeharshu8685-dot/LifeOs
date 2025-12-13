@@ -1,12 +1,13 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function addPrinciple(data) {
     try {
         const { principle, description, type, userId } = data;
 
+        const supabase = createClient();
         const { data: result, error } = await supabase
             .from('personal_philosophy')
             .insert([
@@ -32,6 +33,7 @@ export async function addPrinciple(data) {
 
 export async function getPhilosophy(userId) {
     try {
+        const supabase = createClient();
         const { data: philosophy, error } = await supabase
             .from('personal_philosophy')
             .select('*')
@@ -49,6 +51,7 @@ export async function getPhilosophy(userId) {
 
 export async function deletePrinciple(id) {
     try {
+        const supabase = createClient();
         const { error } = await supabase
             .from('personal_philosophy')
             .delete()

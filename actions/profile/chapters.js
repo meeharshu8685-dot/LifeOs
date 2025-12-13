@@ -1,12 +1,13 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function createChapter(data) {
     try {
         const { name, startDate, endDate, description, userId } = data;
 
+        const supabase = createClient();
         const { data: chapter, error } = await supabase
             .from('life_chapters')
             .insert([
@@ -33,6 +34,7 @@ export async function createChapter(data) {
 
 export async function getChapters(userId) {
     try {
+        const supabase = createClient();
         const { data: chapters, error } = await supabase
             .from('life_chapters')
             .select('*')
@@ -50,6 +52,7 @@ export async function getChapters(userId) {
 
 export async function deleteChapter(chapterId) {
     try {
+        const supabase = createClient();
         const { error } = await supabase
             .from('life_chapters')
             .delete()

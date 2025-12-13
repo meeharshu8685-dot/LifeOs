@@ -1,12 +1,13 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { XP_REWARDS, didLevelUp, calculateLevel, checkAchievements, ACHIEVEMENTS } from '@/lib/xpEngine';
 import { calculateStreak, isCompletedToday as checkIsCompletedToday } from '@/lib/streakUtils';
 import { getTodayString } from '@/lib/dateUtils';
 
 export async function completeHabit(habitId, userId) {
     try {
+        const supabase = createClient();
         const today = getTodayString();
 
         // Check if already completed today

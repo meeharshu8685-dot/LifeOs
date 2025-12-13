@@ -1,10 +1,12 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { XP_REWARDS, calculateSkillLevel, didLevelUp, calculateLevel, checkAchievements, ACHIEVEMENTS } from '@/lib/xpEngine';
 
 export async function addSkillXP(skillId, userId, xpAmount = XP_REWARDS.SKILL_PRACTICE) {
     try {
+        const supabase = createClient();
+
         // Get skill details
         const { data: skill } = await supabase
             .from('skills')
@@ -110,6 +112,8 @@ export async function addSkillXP(skillId, userId, xpAmount = XP_REWARDS.SKILL_PR
 
 export async function createSkill(userId, skillName) {
     try {
+        const supabase = createClient();
+
         const { data, error } = await supabase
             .from('skills')
             .insert({

@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 // import { updateXP } from '@/lib/xpEngine'; // Function doesn't exist
 
 import { revalidatePath } from 'next/cache';
@@ -12,6 +12,7 @@ export async function createQuest(data) {
         // Calculate XP based on difficulty
         const xpReward = difficulty === 'Hard' ? 50 : difficulty === 'Medium' ? 25 : 10;
 
+        const supabase = createClient();
         const { data: quest, error } = await supabase
             .from('quests')
             .insert([
@@ -42,6 +43,7 @@ export async function getDailyQuests(userId) {
     try {
         const today = new Date().toISOString().split('T')[0];
 
+        const supabase = createClient();
         const { data: quests, error } = await supabase
             .from('quests')
             .select('*')
@@ -60,6 +62,8 @@ export async function getDailyQuests(userId) {
 
 export async function completeQuest(questId, userId) {
     try {
+        const supabase = createClient();
+
         // 1. Get quest details specifically for XP reward
         const { data: quest, error: fetchError } = await supabase
             .from('quests')

@@ -1,12 +1,13 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { XP_REWARDS, didLevelUp, calculateLevel } from '@/lib/xpEngine';
 import { calculateJournalStreak } from '@/lib/streakUtils';
 import { getTodayString } from '@/lib/dateUtils';
 
 export async function addJournalEntry(userId, mood, wins, lessons, improvements) {
     try {
+        const supabase = createClient();
         const today = getTodayString();
 
         // Check if entry already exists for today
@@ -111,6 +112,7 @@ export async function addJournalEntry(userId, mood, wins, lessons, improvements)
 
 export async function getJournalEntries(userId, limit = 10) {
     try {
+        const supabase = createClient();
         const { data, error } = await supabase
             .from('journal')
             .select('*')

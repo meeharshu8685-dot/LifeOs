@@ -1,12 +1,13 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function createGoal(data) {
     try {
         const { title, description, category, priority, targetDate, userId } = data;
 
+        const supabase = createClient();
         const { data: goal, error } = await supabase
             .from('goals')
             .insert([
@@ -36,6 +37,7 @@ export async function createGoal(data) {
 
 export async function getGoals(userId) {
     try {
+        const supabase = createClient();
         const { data: goals, error } = await supabase
             .from('goals')
             .select('*')
@@ -53,6 +55,7 @@ export async function getGoals(userId) {
 
 export async function updateGoalProgress(goalId, progress) {
     try {
+        const supabase = createClient();
         const status = progress >= 100 ? 'completed' : 'active';
 
         const { error } = await supabase
